@@ -339,7 +339,7 @@
         ;; TODO Don't hard code this!
         host-mem (-> mesos-hosts first (get-in [:resources :mem "*"]))
         host-cpus (-> mesos-hosts first (get-in [:resources :cpus "*"]))
-        max-waiting (-> config :scheduler-config :fenzo-config :fenzo-max-jobs-considered)
+        fenzo-max-jobs-considered (-> config :scheduler-config :fenzo-config :fenzo-max-jobs-considered)
         cycle-step-ms (-> config :cycle-step-ms)
         step-multiplers [0 1 2 4 8 12 18 24]
         default-share (->> config
@@ -355,7 +355,7 @@
                                                            :instance-type "host"
                                                            :mem host-mem
                                                            :time-to-start 100}
-                                               :max-waiting (* 5 max-waiting)
+                                               :max-waiting (* 25 fenzo-max-jobs-considered)
                                                :mem-share (:mem default-share)
                                                :opt-params (-> config :opt-params)
                                                :opt-server "http://localhost:5000/optimize"
