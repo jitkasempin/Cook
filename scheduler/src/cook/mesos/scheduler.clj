@@ -1168,23 +1168,7 @@
                sort-jobs-duration
                (->> tasks
                     (group-by util/task-ent->user)
-                    (pc/map-vals (fn [task-ents]
-                                   (let [sorted-task-ents (sort task-comparator task-ents)]
-                                     (when-let [user (some-> sorted-task-ents first :job/_instance :job/user)]
-                                       (when (some #(-> user str hash (mod %) zero?) [13 17 19 23 29 31])
-                                         (let [tasks (take 50 sorted-task-ents)]
-                                           (log/info "first" (count tasks) "sorted tasks for" user)
-                                           (doseq [task tasks]
-                                             (log/info (into (sorted-map)
-                                                             {:group-id (some-> task :job/_instance :group/_job first :db/id)
-                                                              :latch-id (some-> task :job/_instance :job/commit-latch :db/id)
-                                                              :job-id (some-> task :job/_instance :db/id)
-                                                              :task-id (some-> task :db/id)
-                                                              :expected-runtime (some-> task :job/_instance :job/expected-runtime)
-                                                              :submit-time (some-> task :job/_instance :job/submit-time (.getTime) str)
-                                                              :priority (some-> task :job/_instance :job/priority)
-                                                              :uuid (some-> task :job/_instance :job/uuid str)}))))))
-                                     sorted-task-ents)))
+                    (pc/map-vals (fn [task-ents] (sort task-comparator task-ents)))
                     (sort-task-scored-task-pairs user->dru-divisors pool-name)
                     (filter (fn [[task _]] (contains? pending-task-ents-set task)))
                     (map (fn [[task _]] (:job/_instance task)))))]
