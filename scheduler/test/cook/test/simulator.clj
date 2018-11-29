@@ -21,6 +21,7 @@
             [cook.mesos.util :as util]
             [cook.test.testutil :refer (restore-fresh-database! poll-until)]
             [datomic.api :as d]
+            [mount.core :as mount]
             [plumbing.core :refer (map-vals map-keys map-from-vals)])
   (:import java.util.Date
            org.apache.curator.framework.CuratorFrameworkFactory
@@ -563,6 +564,16 @@
           config (if config-file
                    (edn/read-string (slurp config-file))
                    {})
+          _ (log/info "Initializing mount state from config file")
+          _ (mount/start-with-args (merge {:agent-query-cache nil
+                                           :authorization {:one-user "foo"}
+                                           :database {:datomic-uri (get config :datomic-url "datomic:mem://mock-mesos")}
+                                           :log {}
+                                           :metrics {:user-metrics-interval-seconds nil}
+                                           :nrepl {}
+                                           :port 123456
+                                           :unhandled-exceptions {}}
+                                          config))
           cycle-step-ms (or cycle-step-ms (:cycle-step-ms config))
           _ (when-not cycle-step-ms
               (throw (ex-info "Must configure cycle-step-ms on command line or config file" {})))
