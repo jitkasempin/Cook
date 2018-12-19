@@ -331,7 +331,7 @@
                                     "slowdown_bound" (-> 30 t/minutes t/in-millis)}
                        :shares [{:user "default" :mem 4000.0 :cpus 4.0 :gpus 1.0}]
                        :time-ms-between-incremental-output (-> 10 t/minutes t/in-millis)
-                       :time-ms-between-optimizer-calls (-> 3 t/minutes t/in-millis)
+                       :time-ms-between-optimizer-calls (-> 20 t/seconds t/in-millis)
                        :time-ms-between-rebalancing (-> 30 t/minutes t/in-millis)}
                       config)
         _ (log/info "Simulation config:" config)
